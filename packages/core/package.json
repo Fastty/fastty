@@ -1,13 +1,13 @@
 {
-  "name": "@fastty/core",
-  "version": "1.0.0",
-  "description": "Fastty Core",
-  "main": "dist/index.js",
-  "author": "Felipe Bueno",
-  "license": "MIT",
-  "scripts": {
-    "start": "ts-node src/index.ts",
-    "build": "npx tsc --build",
-    "build:verbose": "npx tsc --build -v"
-  }
+    "name": "@fastty/core",
+    "version": "1.0.0",
+    "description": "Fastty Core",
+    "main": "dist/index.js",
+    "author": "Felipe Bueno",
+    "license": "MIT",
+    "scripts": {
+        "start": "ts-node src/index.ts",
+        "build": "npx tsc --build",
+        "build:verbose": "npx tsc --build -v"
+    }
 }
