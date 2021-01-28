@@ -16,8 +16,7 @@
   "dependencies": {
     "chalk": "^4.1.0",
     "figlet": "^1.5.0",
-    "yargs": "^16.2.0",
-    "core": "1.0.0"
+    "yargs": "^16.2.0"
   },
   "devDependencies": {
     "@types/chalk": "^2.2.0",
