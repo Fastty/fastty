@@ -37,20 +37,19 @@ To automate the integration between your RestFul API and Front end</strong>
 
 ## Features
 
-<div>
-    <strong>NestJS Controller Input</strong>
-    <img align="right" src="assets/code-images/nestjs-source.png" alt="NestJS Controller Code as input for the package" />
-</div>
-<div>
-    ![Loading-Spinner](assets/loading-spinner.gif)<strong>Then Fastty generates this...</strong>
-    <img align="right" src="assets/code-images/angular-exported.png" alt="CRUD usage" />
-</div>
-
-- :electric_plug: Automates front end code that consumes RESTful endpoints :point_right:
+- :electric_plug: Automates front end code that consumes RESTful endpoints :point_down:
 
 - :mag_right: Nestjs Controller as input and exports Angular Service (HttpClient)
 
 - :space_invader: Query, path params and types supported
+
+<div
+    style="display: flex; align-items: center"
+>
+    <img align="right" style="width: 550px; height: 450px;" src="assets/code-images/nestjs-source.png" alt="NestJS Controller Code as input for the package" />
+    <strong style="text-align: justify;">Fastty exports to :point_right:</strong>
+    <img align="right" style="width: 550px; height: 450px;" src="assets/code-images/angular-exported.png" alt="CRUD usage" />
+</div>
 
 ## Packages
 
