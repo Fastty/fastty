@@ -1,8 +1,9 @@
 import ts from 'typescript';
 
+import { Nullable, report } from '../utils';
 import { Document, Constructors } from '../interfaces/document.interface';
 
-export function nestjsParser(node: ts.Node, checker: ts.TypeChecker) {
+export function nestjsParser(node: ts.Node, checker: ts.TypeChecker): Nullable<Document> {
     let sourceFile: ts.SourceFile | null = null;
     if (!sourceFile) {
         sourceFile = node as ts.SourceFile;
@@ -85,12 +86,7 @@ export function nestjsParser(node: ts.Node, checker: ts.TypeChecker) {
     }
 
     if (!parsedSource) {
-        ts.forEachChild(node, (node) => nestjsParser(node, checker));
-    }
-
-    function report(node: ts.Node, message: string) {
-        const { line, character } = sourceFile?.getLineAndCharacterOfPosition(node.getStart()) as ts.LineAndCharacter;
-        console.error(`${sourceFile?.fileName} (${line + 1},${character + 1}): ${message}`);
+        return ts.forEachChild(node, (node) => nestjsParser(node, checker));
     }
 
     return parsedSource;
