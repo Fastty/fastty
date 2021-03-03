@@ -1,0 +1,26 @@
+{
+    "$schema": "http://json-schema.org/schema",
+    "id": "AngularSchematicService",
+    "title": "Angular Schematic Service",
+    "type": "object",
+    "properties": {
+        "document": {
+            "type": "object",
+            "description": "object definition for build endpoints consumption",
+            "visible": true
+        },
+        "path": {
+            "type": "string",
+            "format": "path",
+            "description": "The path to create the service.",
+            "visible": false
+        },
+        "project": {
+            "type": "string",
+            "description": "The name of the project.",
+            "$default": {
+                "$source": "projectName"
+            }
+        }
+    }
+}

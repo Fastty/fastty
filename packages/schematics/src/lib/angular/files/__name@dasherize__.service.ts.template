@@ -1,0 +1,18 @@
+import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+
+import { Observable } from 'rxjs';
+<% for(const member of members) { %>
+const <%= upperCase(member.name) %> = '<%= getEndpoint(document, member) %>';<% } %>
+
+@Injectable({
+  providedIn: 'root'
+})
+export class <%= classify(name) %>Service {
+  constructor(private http: HttpClient) { }
+  <% for(const member of members) { %>
+  <%= camelize(member.name) %>(): Observable<<%= classify(member.returnType) %>> {
+    return this.http.<%= lowerCase(member.decorators[0].name) %>('test');
+  }
+  <% } %>
+}
