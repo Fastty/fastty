@@ -43,9 +43,41 @@ To automate the integration between your RestFul API and Front end</strong>
 
 - :space_invader: Query, path params and types supported
 
-From             |  To
-:-------------------------:|:-------------------------:
-<img align="right" width="600" height="450" src="assets/code-images/nestjs-source.png" alt="NestJS Controller Code as input for the package" />  |  <img align="right" width="600" height="450" src="assets/code-images/angular-exported.png" alt="Angular Service Code exported by package" />
+<img align="left" width="550" height="470" src="assets/code-images/nestjs-source.png" alt="NestJS Controller Code as input for the package" /> <img align="right" width="550" height="450" src="assets/code-images/angular-exported.png" alt="Angular Service Code exported by package" />
+
+## Source Code
+
+- A Nestjs Controller code example as input for `@fastty/core`
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+
+## Fastty Exported Code
+
+- Automatic exported Angular Service code that consumes the Nestjs Controller endpoints :tada:
+
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
 
 ## Packages
 
