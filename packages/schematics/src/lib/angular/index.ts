@@ -8,7 +8,7 @@ import {
   Rule,
   SchematicContext,
   Tree,
-  url
+  url,
 } from '@angular-devkit/schematics';
 import { Document } from '../../interfaces/document.interface';
 
@@ -23,6 +23,19 @@ export function schematics(_options: AngularServiceSchema): Rule {
 
   function lowerCase(value: string): string {
     return value.toLowerCase();
+  }
+
+  function buildMemberParameters(member: Document) {
+    let finalParameters: string = '';
+    if (member.constructors && member.constructors.length) {
+      const [{ parameters }] = member.constructors;
+      if (parameters && parameters.length) {
+        finalParameters = parameters
+          .map(p => `${p.name}: ${p.type}`)
+          .join(', ');
+      }
+    }
+    return finalParameters;
   }
 
   function getEndpoint(document: Document, member: Document) {
@@ -45,7 +58,6 @@ export function schematics(_options: AngularServiceSchema): Rule {
         .replace(/\'/g, '');
 
       finalEndpoint = `${finalEndpoint}/${url}`;
-      console.log(finalEndpoint);
     }
 
     return finalEndpoint;
@@ -57,13 +69,13 @@ export function schematics(_options: AngularServiceSchema): Rule {
     // }
 
     _options.document = {
-      name: 'CatsController',
+      name: 'Cats',
       type: 'typeof CatsController',
       decorators: [
         {
           name: 'Controller',
           type: 'any',
-          arguments: [ { name: "'cats'", type: '"cats"' } ],
+          arguments: [{ name: 'cats', type: '"cats"' }],
           constructors: []
         }
       ],
@@ -71,17 +83,17 @@ export function schematics(_options: AngularServiceSchema): Rule {
         {
           name: 'create',
           type: '(createCatDto: CreateCatDto) => Promise<void>',
-          returnType: 'Promise<void>',
+          returnType: 'void',
           constructors: [
             {
-              parameters: [ { name: 'createCatDto', type: 'CreateCatDto' } ]
+              parameters: [{ name: 'createCatDto', type: 'CreateCatDto' }]
             }
           ],
           decorators: [
             {
               name: 'Post',
               type: 'any',
-              arguments: [ { name: "'create/cat'", type: '"create/cat"' } ],
+              arguments: [{ name: 'create/cat', type: '"create/cat"' }],
               constructors: []
             }
           ]
@@ -89,12 +101,12 @@ export function schematics(_options: AngularServiceSchema): Rule {
         {
           name: 'findAll',
           type: '() => Promise<Cat[]>',
-          returnType: 'Promise<Cat[]>',
-          constructors: [ { parameters: [] } ],
-          decorators: [ { name: 'Get', type: 'any', arguments: [], constructors: [] } ]
+          returnType: 'Cat[]',
+          constructors: [{ parameters: [] }],
+          decorators: [{ name: 'Get', type: 'any', arguments: [], constructors: [] }]
         }
       ],
-      fileName: undefined
+      fileName: '/home/felipe-pc/projects/fastty/packages/core/src/resource/cat.controller.ts'
     }
 
     const templateSource = apply(
@@ -105,6 +117,7 @@ export function schematics(_options: AngularServiceSchema): Rule {
           lowerCase,
           upperCase,
           getEndpoint,
+          buildMemberParameters,
           name: _options.document.name,
           members: _options.document.members,
           document: _options.document,
