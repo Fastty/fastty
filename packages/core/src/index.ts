@@ -31,9 +31,14 @@ const compilerOptions: ts.CompilerOptions = {
     target: ts.ScriptTarget.ES5,
 };
 const program = ts.createProgram(fileNames, compilerOptions);
+const importedSourceFiles: ts.SourceFile[] = [];
+const isRootSourceFile = (fileName: string) => fileNames.some((rootPath) => rootPath === fileName);
 for (const sourceFile of program.getSourceFiles()) {
-    // parse source file
-    if (!sourceFile.isDeclarationFile) {
+    if (!sourceFile.isDeclarationFile && !isRootSourceFile(sourceFile.fileName)) {
+        importedSourceFiles.push(sourceFile);
+    }
+
+    if (!sourceFile.isDeclarationFile && isRootSourceFile(sourceFile.fileName)) {
         const document = parseSource(sourceFile, program.getTypeChecker());
         if (document) {
             exportSource(document);
