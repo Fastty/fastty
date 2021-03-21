@@ -35,6 +35,7 @@ export function nestjsParser(node: ts.Node, checker: ts.TypeChecker): Nullable<D
         return {
             name: symbol.getName(),
             type: checker.typeToString(checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration)),
+            decorators: symbol.valueDeclaration?.decorators?.map(serializeDecorator) ?? [],
         };
     }
 
