@@ -3,17 +3,15 @@ import { HttpClient } from '@angular/common/http';
 
 import { Observable } from 'rxjs';
 
-const API_BASE = ''; // fill up this with your api url or override from env variable!
+const API_BASE = ''; // fill up this with your api url or replace from env variable!
 <% for(const member of members) { %>
 const <%= upperCase(underscore(member.name)) %> = '<%= getEndpoint(document, member) %>';<% } %>
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class <%= classify(name) %>Service {
-  constructor(private http: HttpClient) { }
+  constructor(private readonly http: HttpClient) { }
   <% for(const member of members) { %>
-  <%= camelize(member.name) %>(<% if (member.constructors && member.constructors) { %><%= buildMemberParameters(member) %><% } %>): Observable<<%= classify(member.returnType) %>> {
+  <%= camelize(member.name) %>(<% if (member.constructors && member.constructors) { %><%= buildMemberParameters(member) %><% } %>): Observable<<%= member.returnType %>> {
     <%= buildBodyFromMember(document, member) %>
   }
   <% } %>
