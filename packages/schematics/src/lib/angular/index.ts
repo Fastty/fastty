@@ -3,6 +3,7 @@ import {
     apply,
     applyTemplates,
     chain,
+    forEach,
     mergeWith,
     move,
     Rule,
@@ -10,10 +11,23 @@ import {
     Tree,
     url,
 } from '@angular-devkit/schematics';
-import { Document } from '../../interfaces/document.interface';
+
+import { ESLint } from 'eslint';
 
 import { AngularServiceSchema } from './schema';
+import { Document } from '../../interfaces/document.interface';
 import { document } from './resource/document-resource';
+
+interface HttpClientParameters {
+    httpClientArguments: string[];
+    prefixCode?: string;
+}
+
+interface HttpQueryParams {
+    params: {
+        [param: string]: string | string[];
+    };
+}
 
 // You don't have to export the function as default. You can also have more than one rule factory
 // per file.
@@ -44,27 +58,107 @@ export function schematics(_options: AngularServiceSchema): Rule {
         const httpMethod = decorator && decorator.name;
         const memberEnpoint = getEndpoint(document, member);
         const hasHttpParam = (endpoint: string): boolean => !!endpoint.trim().match(/\/\:\w+/g);
+        const hasQueryParam = (parameters: Document[]): boolean =>
+            parameters.some(p =>
+                p.decorators && p.decorators.some(d => d.name === 'Query')
+            )
+        const getBodyParam = (parameters: Document[]): Document | undefined =>
+            parameters.find(p =>
+                p.decorators && p.decorators.some(d => d.name === 'Body')
+            )
 
-        let baseMemberContent = `
-            this.http
-            .${lowerCase(httpMethod)}<${strings.classify(member.returnType as string)}>
-        `.replace(/(\r\n|\n|\r|\s)/gm, '');
+        let baseMemberContent = 
+            `return this.http.${lowerCase(httpMethod)}<${member.returnType}>`;
 
         if (member.constructors && member.constructors.length) {
-            // const parameterUrl = `API_BASE + ${upperCase(strings.underscore(member.name))}`;
+            let httpClientArguments: string[] = [`API_BASE + ${upperCase(strings.underscore(member.name))}`];
+            let prefixCode: string | undefined = undefined;
             const [{ parameters }] = member.constructors;
 
             if (parameters) {
                 if (hasHttpParam(memberEnpoint)) {
-                    baseMemberContent = parseWithHttpParam(parameters, member, baseMemberContent);
+                    ({ httpClientArguments, prefixCode } =
+                        parseWithHttpParam(parameters, member));
+
+                    if (prefixCode) {
+                        baseMemberContent = prefixCode + baseMemberContent;
+                    }
+
+                    if (hasQueryParam(parameters)) { // both route param and query param
+                        const parsedWithQueryParam =
+                            parseWithQueryParam(parameters, member.name, true);
+    
+                        httpClientArguments = httpClientArguments
+                            .concat(parsedWithQueryParam.httpClientArguments);
+
+                        if (parsedWithQueryParam.prefixCode) {
+                            baseMemberContent = parsedWithQueryParam.prefixCode + baseMemberContent;
+                        }
+                    }
+                } else if (hasQueryParam(parameters)) {
+                    ({ httpClientArguments, prefixCode } =
+                        parseWithQueryParam(parameters, member.name));
+
+                    if (prefixCode) {
+                        baseMemberContent = prefixCode + baseMemberContent;
+                    }
                 }
+
+                const bodyParameter = getBodyParam(parameters);
+
+                if (!!bodyParameter) {
+                    httpClientArguments.splice(1, 0, bodyParameter.name);
+                }
+
+                baseMemberContent += `(${httpClientArguments.join(', ')});`;
             }
         }
 
         return baseMemberContent;
     }
 
-    function parseWithHttpParam(parameters: Document[], member: Document, baseMemberContent: string) {
+    function parseWithQueryParam(parameters: Document[], memberName: string, hasRouteParam = false): HttpClientParameters {
+        const httpQueryParams = parameters
+            .filter(p => {
+                if (p.decorators
+                    && p.decorators.length
+                    && p.decorators.some(d => d.name === 'Query')) {
+                    return true;
+                }
+
+                return false;
+            })
+            .reduce<HttpQueryParams>((acc, curr) => {
+                const { arguments: args } = curr.decorators?.find(d => d.name === 'Query') as Document;
+                const [ { name: queryParamKey } ] = args as Document[];
+                const queryParamValue = curr.name;
+
+                acc = {
+                    params: {
+                        ...acc.params,
+                        [queryParamKey]: queryParamValue,
+                    }
+                };
+
+                return acc;
+            }, { params: {} });
+
+
+        const httpClientArguments: string[] = [`API_BASE + ${upperCase(strings.underscore(memberName))}`];
+        if (hasRouteParam) {
+            httpClientArguments.splice(0, 1, 'url');
+        }
+
+        if (httpQueryParams) {
+            httpClientArguments.push(
+                JSON.stringify(httpQueryParams).replace(/\"/g, '')
+            );
+        }
+
+        return { httpClientArguments };
+    }
+
+    function parseWithHttpParam(parameters: Document[], member: Document): HttpClientParameters {
         const httpParams = parameters
             .filter(p => {
                 if (p.decorators
@@ -86,14 +180,18 @@ export function schematics(_options: AngularServiceSchema): Rule {
                 };
             });
 
+        let url = '';
         if (httpParams && httpParams.length) {
-            let url = `const url = \`API_BASE + \$\{${upperCase(strings.underscore(member.name))}\}\``;
+            url = `const url = API_BASE + ${upperCase(strings.underscore(member.name))}`;
             for (const param of httpParams) {
                 url = url + `.replace(':${param.paramKey}', ${param.name})\n`;
             }
-            baseMemberContent = url + `\t${baseMemberContent}(url);`;
         }
-        return baseMemberContent;
+
+        return {
+            httpClientArguments: ['url'],
+            prefixCode: url,
+        }
     }
 
     function getEndpoint(document: Document, member: Document) {
@@ -128,6 +226,8 @@ export function schematics(_options: AngularServiceSchema): Rule {
 
         _options.document = document;
 
+        const eslint = new ESLint({ fix: true });
+
         const templateSource = apply(
             url('./files'),
             [
@@ -142,12 +242,24 @@ export function schematics(_options: AngularServiceSchema): Rule {
                     members: _options.document.members,
                     document: _options.document,
                 }),
-                move(normalize(_options.path ?? ''))
-            ]
+                move(normalize(_options.path ?? '')),
+                forEach((fileEntry) => {
+                    setTimeout(async () => {
+                        const results = await eslint.lintFiles([`/home/felipe-pc/projects/fastty/packages/schematics/cats-controller.service.ts`]);
+                        await ESLint.outputFixes(results);
+                        const formatter = await eslint.loadFormatter('stylish');
+                        const formated = formatter.format(results);
+
+                        _.overwrite(normalize(fileEntry.path), formated);
+                    }, 100);
+    
+                    return fileEntry;
+                }),
+            ],
         )
 
         return chain([
-            mergeWith(templateSource)
+            mergeWith(templateSource),
         ]);
     };
 }
