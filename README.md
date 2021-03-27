@@ -37,11 +37,14 @@ To automate the integration between your RestFul API and Front end</strong>
 
 ## Features
 
-- :electric_plug: Automates front end code that consumes RESTful endpoints :point_down:
+- :electric_plug: Automates front end code that consumes RESTful endpoints
 
-- :mag_right: Nestjs Controller as input and exports Angular Service (HttpClient)
+- :space_invader: Query, route params supported
 
-- :space_invader: Query, path params and types supported
+- :heart: Typescript ready
+
+- :mag_right: Nestjs Controller as input and exports Angular Service (HttpClient) :point_down:
+
 
 <img align="left" width="550" height="470" src="assets/code-images/nestjs-source.png" alt="NestJS Controller Code as input for the package" /> <img align="right" width="550" height="450" src="assets/code-images/angular-exported.png" alt="Angular Service Code exported by package" />
 
@@ -85,18 +88,18 @@ To automate the integration between your RestFul API and Front end</strong>
 
 ## Packages
 
-- [**@fastty/core**](#) - core package which provides `parserSource, exportSource` methods that provides all features
-- [**@fastty/cli**](#) - cli package that integrates with `@fastty/core` that provides an interface for easy use of all features
+- [**@fastty/core**](#) - core package which provides `parserSource` method that parse source code into a generic interface
+- [**@fastty/schematics**](#) - schematics package based on `@angular-devkit/schematics` that provides functionality to export code that will consumes source code
+- [**@fastty/cli**](#) - cli package that integrates with `@fastty/core` and `@fastty/schematics` that provides an interface for easy use of all features
 
 ## Supports
-<strong>Parsers:</strong>
+<strong>Source Code:</strong>
 - [x] Nestjs
-- [ ] Node
 
-<strong>Exporters:</strong>
+<strong>Exported Code:</strong>
 - [x] Angular (HttpClient)
-- [ ] Axios
-- [ ] Fetch API
+- [ ] Axios (RoadMap)
+- [ ] Fetch API (RoadMap)
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
