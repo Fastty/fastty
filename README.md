@@ -39,7 +39,7 @@ To automate the integration between your RestFul API and Front end</strong>
 
 - :electric_plug: Automates front end code that consumes RESTful endpoints
 
-- :space_invader: Query, route params supported
+- :space_invader: Query and route params supported
 
 - :heart: Typescript ready
 
