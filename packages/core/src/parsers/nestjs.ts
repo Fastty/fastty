@@ -2,9 +2,10 @@ import ts from 'typescript';
 
 import { Nullable, report } from '../utils';
 import { Document, Constructors } from '../interfaces/document.interface';
+import { Tokens } from '../constants/tokens';
 
+let sourceFile: ts.SourceFile | null = null;
 export function nestjsParser(node: ts.Node, checker: ts.TypeChecker): Nullable<Document> {
-    let sourceFile: ts.SourceFile | null = null;
     if (!sourceFile) {
         sourceFile = node as ts.SourceFile;
     }
@@ -34,13 +35,14 @@ export function nestjsParser(node: ts.Node, checker: ts.TypeChecker): Nullable<D
         return {
             name: symbol.getName(),
             type: checker.typeToString(checker.getTypeOfSymbolAtLocation(symbol, symbol.valueDeclaration)),
+            decorators: symbol.valueDeclaration?.decorators?.map(serializeDecorator) ?? [],
         };
     }
 
     /** Serialize a expression into a Symbol */
     function serializeExpression(expression: ts.Expression): Document {
         return {
-            name: expression.getText(),
+            name: expression.getText().replace(/'/g, ''),
             type: checker.typeToString(checker.getTypeAtLocation(expression)),
         };
     }
@@ -59,7 +61,15 @@ export function nestjsParser(node: ts.Node, checker: ts.TypeChecker): Nullable<D
         const signature = checker.getSignatureFromDeclaration(
             methodDeclaration as ts.SignatureDeclaration,
         ) as ts.Signature;
-        const returnType = checker.typeToString(checker.getReturnTypeOfSignature(signature));
+
+        const returnTypeFromSignature = checker.getReturnTypeOfSignature(signature);
+        let returnType = checker.typeToString(returnTypeFromSignature);
+        if (returnTypeFromSignature?.symbol?.name === Tokens.Promise) {
+            // retrive the type inside typeArguments of Promise. Ex: Promise<T>, this returns T
+            returnType = checker.typeToString(
+                (returnTypeFromSignature as ts.TypeReference).typeArguments?.[0] as ts.Type,
+            );
+        }
 
         return {
             ...details,

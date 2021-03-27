@@ -1,0 +1,10 @@
+{
+  "$schema": "../../../node_modules/@angular-devkit/schematics/collection-schema.json",
+  "schematics": {
+    "angular": {
+      "description": "An Angular schematic to auto generate service.",
+      "factory": "./lib/angular/index#schematics",
+      "schema": "./lib/angular/schema.json"
+    }
+  }
+}
