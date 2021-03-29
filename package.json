@@ -8,6 +8,7 @@
     "scripts": {
         "start:cli": "lerna run start --scope=@fastty/cli",
         "start:core": "lerna run start --scope=@fastty/core",
+        "add-package": "lerna add",
         "new-version": "lerna version --conventional-commits --yes",
         "diff": "lerna diff",
         "lint": "eslint . --ext .ts",
