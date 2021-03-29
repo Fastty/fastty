@@ -15,7 +15,7 @@
     },
     "plugins": ["@typescript-eslint"],
     "rules": {
-        "no-console": ["error", { "allow": ["warn", "error"] }],
+        "no-console": ["error", { "allow": ["warn", "error", "info"] }],
         "@typescript-eslint/explicit-module-boundary-types": "off"
     }
 }
