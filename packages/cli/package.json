@@ -17,6 +17,9 @@
         "prebuild": "npm run clean"
     },
     "dependencies": {
+        "@angular-devkit/core": "^11.2.6",
+        "@angular-devkit/schematics": "^11.2.6",
+        "@angular-devkit/schematics-cli": "^0.1102.6",
         "@fastty/core": "^1.0.0",
         "@fastty/schematics": "^1.0.0",
         "chalk": "^4.1.0",
