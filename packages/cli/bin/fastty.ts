@@ -4,7 +4,7 @@ import { cyan } from 'chalk';
 import { textSync } from 'figlet';
 
 import { version as pkgJsonVersion } from '../package.json';
-import { statLocalBinaries, loadLocalBinaries } from '../src/utils/local-binaries';
+import { statLocalBinaries, loadLocalBinaries } from '../src/utils';
 import { load as commandLoader } from '../src/commands';
 
 function bootstrap(): void {
