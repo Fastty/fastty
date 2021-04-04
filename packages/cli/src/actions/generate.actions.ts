@@ -7,6 +7,7 @@ import { parseSource } from '@fastty/core';
 
 import { loadSchematicsBinary } from '../utils';
 import { runSchematic } from '../runners/schematics.runner';
+import { FASTTY_SCHEMATICS_PATH } from '../constants/fastty-schematics-path';
 
 interface Options extends OptionValues {
     dryRun: boolean;
@@ -37,10 +38,8 @@ export function generateFilesAction(sourcePath: string, options: Options) {
                 const document = parseSource(sourceFile, program.getTypeChecker());
                 runSchematic(
                     schematicBin,
-                    ...[
-                        `@fastty/schematics:${options.collection ?? 'angular'}`,
-                        `--document=${Buffer.from(JSON.stringify(document)).toString('base64')}`,
-                    ],
+                    `${FASTTY_SCHEMATICS_PATH}:${options.collection ?? 'angular'}`,
+                    `--document='${JSON.stringify(document)}'`,
                 );
             }
         }
