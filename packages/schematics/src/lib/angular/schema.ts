@@ -1,7 +1,5 @@
-import { Document } from '../../interfaces/document.interface';
-
 export interface AngularServiceSchema {
-    document: Document;
+    document: string;
     path?: string;
     project?: string;
 }

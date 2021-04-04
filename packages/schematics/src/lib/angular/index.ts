@@ -8,7 +8,6 @@ import {
     move,
     Rule,
     SchematicContext,
-    SchematicsException,
     Tree,
     url,
 } from '@angular-devkit/schematics';
@@ -17,34 +16,36 @@ import { runLint } from '../../rules';
 import { AngularServiceSchema } from './schema';
 import { lowerCase, upperCase } from '../../utils';
 import { getEndpoint, buildBodyFromMember, buildMemberParameters } from '../../helpers';
+import { Document } from '../../interfaces/document.interface';
+import { isTypeOf } from '../../utils/isTypeOf';
 
 export function schematics(options: AngularServiceSchema): Rule {
     return (_: Tree, _context: SchematicContext) => {
-        if (!options.document || !Object.keys(options.document).length) {
-          throw new SchematicsException('The argument document is required!');
+        const document = JSON.parse(options.document);
+
+        if (isTypeOf<Document>(document, true, 'name', 'members')) {
+            const templateSource = apply(
+                url('./files'),
+                [
+                    applyTemplates({
+                        ...strings,
+                        lowerCase,
+                        upperCase,
+                        getEndpoint,
+                        buildMemberParameters,
+                        buildBodyFromMember,
+                        name: document.name,
+                        members: document.members,
+                        document,
+                    }),
+                    move(normalize(options.path ?? '')),
+                    runLint(),
+                ],
+            )
+    
+            return chain([
+                mergeWith(templateSource, MergeStrategy.Overwrite),
+            ]);
         }
-
-        const templateSource = apply(
-            url('./files'),
-            [
-                applyTemplates({
-                    ...strings,
-                    lowerCase,
-                    upperCase,
-                    getEndpoint,
-                    buildMemberParameters,
-                    buildBodyFromMember,
-                    name: options.document.name,
-                    members: options.document.members,
-                    document: options.document,
-                }),
-                move(normalize(options.path ?? '')),
-                runLint(),
-            ],
-        )
-
-        return chain([
-            mergeWith(templateSource, MergeStrategy.Overwrite),
-        ]);
     };
 }

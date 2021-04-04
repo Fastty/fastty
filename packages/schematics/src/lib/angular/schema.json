@@ -5,7 +5,7 @@
     "type": "object",
     "properties": {
         "document": {
-            "type": "object",
+            "type": "string",
             "description": "object definition for build endpoints consumption",
             "visible": true
         },
@@ -22,5 +22,8 @@
                 "$source": "projectName"
             }
         }
-    }
+    },
+    "required": [
+        "document"
+    ]
 }
