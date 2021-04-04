@@ -24,23 +24,32 @@ export function schematics(options: AngularServiceSchema): Rule {
         const document = JSON.parse(options.document);
 
         if (isTypeOf<Document>(document, true, 'name', 'members')) {
+            const isDryRunMode = process.argv.some(arg =>
+                arg.includes('--dry-run') || arg.includes('--dry-run=true')
+            );
+
+            const templateRules: Array<Rule> = [
+                applyTemplates({
+                    ...strings,
+                    lowerCase,
+                    upperCase,
+                    getEndpoint,
+                    buildMemberParameters,
+                    buildBodyFromMember,
+                    name: document.name,
+                    members: document.members,
+                    document,
+                }),
+                move(normalize(options.path ?? ''))
+            ];
+
+            if (!isDryRunMode) {
+                templateRules.push(runLint());
+            }
+
             const templateSource = apply(
                 url('./files'),
-                [
-                    applyTemplates({
-                        ...strings,
-                        lowerCase,
-                        upperCase,
-                        getEndpoint,
-                        buildMemberParameters,
-                        buildBodyFromMember,
-                        name: document.name,
-                        members: document.members,
-                        document,
-                    }),
-                    move(normalize(options.path ?? '')),
-                    runLint(),
-                ],
+                templateRules,
             )
     
             return chain([
