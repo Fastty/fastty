@@ -6,11 +6,16 @@ export function runSchematic(binary: string, ...args: string[]) {
     const childProcess = spawn(binary, args, {
         cwd: process.cwd(),
         shell: true,
+    }).on('error', (err) => {
+        console.error(`An ${red('Error').bold()} occured spawing sub process!\n${err}`);
     });
 
-    childProcess.stdout.on('data', (data) => console.info(data.toString().replace(/\r\n|\n/, '')));
+    childProcess.stdout.on('data', (data) => {
+        console.info(data.toString().replace(/\r\n|\n/, ''));
+    });
 
-    childProcess.on('error', (err) => {
-        console.error(`An ${red('Error').bold()} occured while generating file!\n${err}`);
+    childProcess.stderr.on('data', (err) => {
+        console.error(err.toString('utf-8'));
+        process.exit(1);
     });
 }
