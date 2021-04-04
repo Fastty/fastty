@@ -11,16 +11,16 @@ import { FASTTY_SCHEMATICS_PATH } from '../constants/fastty-schematics-path';
 
 interface Options extends OptionValues {
     dryRun: boolean;
-    project: string | null;
-    collection: string | null;
+    path: string | null;
 }
 
 export function generateFilesAction(sourcePath: string, options: Options) {
     const schematicBin = loadSchematicsBinary();
-    const stat = statSync(sourcePath);
+    const solvedPath = resolve(sourcePath);
+    const stat = statSync(solvedPath);
 
     if (!stat.isDirectory()) {
-        const fileNames = [resolve(sourcePath)];
+        const fileNames = [solvedPath];
         const compilerOptions: CompilerOptions = {
             ...getDefaultCompilerOptions(),
             allowJs: true,
@@ -40,6 +40,7 @@ export function generateFilesAction(sourcePath: string, options: Options) {
                     schematicBin,
                     `${FASTTY_SCHEMATICS_PATH}:${options.collection ?? 'angular'}`,
                     `--document='${JSON.stringify(document)}'`,
+                    `--dry-run=${options.dryRun}`,
                 );
             }
         }
