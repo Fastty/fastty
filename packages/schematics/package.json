@@ -1,7 +1,7 @@
 {
     "name": "@fastty/schematics",
     "version": "1.0.0",
-    "description": "A blank schematics",
+    "description": "Fastty schematics package to auto generate code consumption.",
     "scripts": {
         "clean": "rimraf dist/",
         "build": "yarn clean && tsc -p tsconfig.json",
@@ -18,6 +18,10 @@
     "author": "Felipe Bueno",
     "license": "MIT",
     "schematics": "./dist/collection.json",
+    "main": "dist/lib/angular/index.js",
+    "files": [
+        "dist"
+    ],
     "dependencies": {
         "@angular-devkit/core": "^11.2.2",
         "@angular-devkit/schematics": "^11.2.2",

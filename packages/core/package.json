@@ -3,6 +3,9 @@
     "version": "1.0.0",
     "description": "Fastty Core",
     "main": "dist/index.js",
+    "files": [
+        "dist"
+    ],
     "author": "Felipe Bueno",
     "license": "MIT",
     "scripts": {
