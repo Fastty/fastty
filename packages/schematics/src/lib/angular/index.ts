@@ -14,7 +14,7 @@ import {
 
 import { runLint } from '../../rules';
 import { AngularServiceSchema } from './schema';
-import { lowerCase, upperCase } from '../../utils';
+import { isDryRun, lowerCase, upperCase } from '../../utils';
 import { getEndpoint, buildBodyFromMember, buildMemberParameters } from '../../helpers';
 import { Document } from '../../interfaces/document.interface';
 import { isTypeOf } from '../../utils/isTypeOf';
@@ -24,10 +24,6 @@ export function schematics(options: AngularServiceSchema): Rule {
         const document = JSON.parse(options.document);
 
         if (isTypeOf<Document>(document, true, 'name', 'members')) {
-            const isDryRunMode = process.argv.some(arg =>
-                arg.includes('--dry-run') || arg.includes('--dry-run=true')
-            );
-
             const templateRules: Array<Rule> = [
                 applyTemplates({
                     ...strings,
@@ -43,7 +39,7 @@ export function schematics(options: AngularServiceSchema): Rule {
                 move(normalize(options.path ?? ''))
             ];
 
-            if (!isDryRunMode) {
+            if (!isDryRun()) {
                 templateRules.push(runLint());
             }
 
