@@ -1,9 +1,9 @@
 import { resolve } from 'path';
 import { statSync } from 'fs';
-import { OptionValues } from 'commander';
 
-import { CompilerOptions, getDefaultCompilerOptions, ScriptTarget, createProgram, SourceFile } from 'typescript';
+import { OptionValues } from 'commander';
 import { parseSource } from '@fastty/core';
+import { CompilerOptions, getDefaultCompilerOptions, ScriptTarget, createProgram, SourceFile } from 'typescript';
 
 import { loadSchematicsBinary } from '../utils';
 import { runSchematic } from '../runners/schematics.runner';
