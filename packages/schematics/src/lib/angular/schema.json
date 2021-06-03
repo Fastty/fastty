@@ -5,22 +5,18 @@
     "type": "object",
     "properties": {
         "document": {
-            "type": "object",
+            "type": "string",
             "description": "object definition for build endpoints consumption",
             "visible": true
         },
         "path": {
             "type": "string",
             "format": "path",
-            "description": "The path to create the service.",
-            "visible": false
-        },
-        "project": {
-            "type": "string",
-            "description": "The name of the project.",
-            "$default": {
-                "$source": "projectName"
-            }
+            "description": "The path where should create the service.",
+            "visible": true
         }
-    }
+    },
+    "required": [
+        "document"
+    ]
 }
